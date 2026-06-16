@@ -23,3 +23,7 @@ Thumbs.db
 # Backend uploads
 backend/uploads/*
 !backend/uploads/.gitkeep
+
+# Installer and archive files
+*.msi
+*.zip

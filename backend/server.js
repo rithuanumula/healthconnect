@@ -43,6 +43,15 @@ app.use('/api/prescriptions', prescriptions);
 app.use('/api/follow-ups', followUps);
 app.use('/api/admin', admin);
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'Welcome to the HealthConnect Backend API.',
+    info: 'Please access the frontend application via http://localhost:5173 to view the user interface.'
+  });
+});
+
 // Test endpoint
 app.get('/api/health-check', (req, res) => {
   res.json({ status: 'ok', message: 'HealthConnect Backend API is running successfully.' });

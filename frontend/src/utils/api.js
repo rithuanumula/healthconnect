@@ -1,4 +1,11 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+let API_URL = import.meta.env.VITE_API_URL || '/api';
+
+// Ensure absolute API URLs have the /api suffix (helpful for Render/live deployment)
+if (API_URL.startsWith('http://') || API_URL.startsWith('https://')) {
+  if (!API_URL.endsWith('/api') && !API_URL.endsWith('/api/')) {
+    API_URL = `${API_URL.replace(/\/$/, '')}/api`;
+  }
+}
 
 /**
  * Custom fetcher wrapper that mimics Axios functionality
@@ -35,7 +42,16 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      
+      // Safely parse JSON or extract text depending on the Content-Type header
+      const contentType = response.headers.get('content-type');
+      let data = null;
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Expected JSON response, but received HTML/Text. Status: ${response.status}. Preview: ${text.slice(0, 150)}`);
+      }
 
       if (!response.ok) {
         throw {
